@@ -18,7 +18,7 @@ jobs:
       - name: Test statistics and collectors
         run: python -m unittest -v
       - name: Build GUI executable
-        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name PACSStatistics --add-data "templates;templates" --collect-all pywinauto --collect-all comtypes launcher.py
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name PACSStatistics --add-data "templates;templates" --collect-all pywinauto --collect-all comtypes --collect-all tzdata launcher.py
       - name: Upload Windows executable
         uses: actions/upload-artifact@v4
         with:
