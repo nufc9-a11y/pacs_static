@@ -1,0 +1,27 @@
+name: Build Windows GUI
+on:
+  push:
+    branches: [pacs-statistics-prototype]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install dependencies
+        run: python -m pip install -r requirements-build.txt
+      - name: Test statistics and collectors
+        run: python -m unittest -v
+      - name: Build GUI executable
+        run: python -m PyInstaller --noconfirm --clean --onefile --windowed --name PACSStatistics --add-data "templates;templates" --collect-all pywinauto --collect-all comtypes launcher.py
+      - name: Upload Windows executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: PACSStatistics-Windows
+          path: dist/PACSStatistics.exe
+          if-no-files-found: error
