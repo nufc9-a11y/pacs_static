@@ -11,6 +11,7 @@ from windows_probe import discover_windows, save_report
 from screen_reader import ScreenReadError, parse_rows, read_snapshot
 from pacs_statistics import KOREA
 from scroll_collector import ScanCancelled, UIAScrollDriver, collect
+from ocr_preview import open_preview
 
 
 def main():
@@ -188,6 +189,9 @@ def main():
         button.pack(side='left', padx=4)
         action_buttons.append(button)
     ttk.Button(scans, text='중지', command=stop.set).pack(side='left', padx=4)
+    ocr_button = ttk.Button(frame, text='표가 안 읽힐 때 — 화면 영역 OCR 읽기', command=lambda: open_preview(root))
+    ocr_button.pack(anchor='w', pady=4)
+    action_buttons.append(ocr_button)
     results = ttk.Treeview(frame, columns=('ae', 'time', 'exam', 'image'), show='headings', height=10)
     for key, label in [('ae', 'AE Title'), ('time', '시간대'), ('exam', 'exam'), ('image', 'AI 제외 image')]:
         results.heading(key, text=label)
