@@ -59,7 +59,7 @@ def parse_rows(headers, rows, titles, day):
     return result
 
 
-def read_snapshot(window):
+def read_snapshot(window, with_table=False):
     """Only accept unambiguous tables with direct DataItem/cell structure."""
     candidates = []
     try:
@@ -83,11 +83,11 @@ def read_snapshot(window):
                     raise ScreenReadError('PACS 행 구조를 아직 지원하지 않습니다. 화면 진단 보고서가 필요합니다.')
                 rows.append([c.window_text() for c in cells])
             if rows:
-                candidates.append((headers, rows))
+                candidates.append((headers, rows, table))
     except ScreenReadError:
         raise
     except Exception:
         raise ScreenReadError('PACS 표 읽기에 실패했습니다. 창 상태와 실행 권한을 확인하세요.') from None
     if len(candidates) != 1:
         raise ScreenReadError('검사 목록을 하나로 식별하지 못했습니다. 화면 구조 진단이 필요합니다.')
-    return candidates[0]
+    return candidates[0] if with_table else candidates[0][:2]

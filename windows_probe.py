@@ -21,6 +21,13 @@ def probe(window):
     try:
         controls = window.descendants()
         types = Counter(c.element_info.control_type for c in controls)
+        scrollable_tables = 0
+        for control in controls:
+            if control.element_info.control_type in ('Table', 'DataGrid', 'List'):
+                try:
+                    scrollable_tables += int(bool(control.iface_scroll.CurrentVerticallyScrollable))
+                except Exception:
+                    pass
         # Only known non-patient column labels are retained.
         found = set()
         for control in controls:
@@ -28,10 +35,11 @@ def probe(window):
                 label = control.window_text().strip()
                 if label in HEADERS:
                     found.add(label)
-        return dict(report_version=1, method='Windows UI Automation',
+        return dict(report_version=2, method='Windows UI Automation',
                     control_type_counts=dict(types), recognized_headers=sorted(found),
                     table_control_count=types['Table'] + types['DataGrid'],
                     data_item_count=types['DataItem'],
+                    vertically_scrollable_table_count=scrollable_tables,
                     complete_collection_verified=False,
                     note='제어 요소와 열 제목만 진단했습니다. 검사 데이터 수집은 수행하지 않았습니다.')
     except Exception:
